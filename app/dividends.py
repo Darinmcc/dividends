@@ -12,9 +12,28 @@ load_dotenv() #> loads contents of the .env file into the script's environment
 
 #GET /stock/{symbol}/dividends/next
 
+
+
 api_key = os.environ.get("IEX_API_KEY")
 
-url = f"https://cloud.iexapis.com/stable/tops?token={api_key}&symbols=aapl"
+# INFO INPUTS
+#
+print("Welcome to Robo Advisor!")
+print("------------------------")
+symbol = input("Enter stock symbol:")
+
+symbol_list_price_url = f"https://cloud.iexapis.com/stable/tops?token={api_key}&symbols=aapl"
+
+if symbol is not in symbol_list_price_url:
+    print("Not a valid stock symbol. Please re-run")
+    exit()
+elif len(symbol) > 4:
+    print("Not a valid stock symbol. Please re-run")
+    exit()
+
+price_url = f"https://cloud.iexapis.com/stable/tops?token={api_key}&symbols=aapl"
+
+
 
 response = requests.get(url)
 
