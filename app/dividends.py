@@ -12,7 +12,13 @@ load_dotenv() #> loads contents of the .env file into the script's environment
 
 #GET /stock/{symbol}/dividends/next
 
+csv_file_path_port = os.path.join(os.path.dirname(__file__), "..", "portfolio", "my_portfolio.csv")
 
+csv_headers_port = ["Symbol"]
+with open(csv_file_path_port, "r") as csv_file: # "w" means "open the file for writing"
+    reader = csv.DictReader(csv_file, fieldnames=csv_headers_port)
+    for row in reader:
+        print(row["Symbol"])
 
 
 
@@ -64,14 +70,14 @@ else:
 
 print(dividend_parsed_response["exDate"])
 
-csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "dividends.csv")
+csv_file_path_div = os.path.join(os.path.dirname(__file__), "..", "data", "dividends.csv")
  #don't change csv file path or __file__ variable
  #file starts in app directory
 
-csv_headers = ["Symbol","Ex Date", "Payment Date", "Record Date", "Declared Date", "Dividend Amount", "Dividend Event Type","Currency","Description","Frequency"]
+csv_headers_div = ["Symbol","Ex Date", "Payment Date", "Record Date", "Declared Date", "Dividend Amount", "Dividend Event Type","Currency","Description","Frequency"]
 
-with open(csv_file_path, "w") as csv_file: # "w" means "open the file for writing"
-    writer = csv.DictWriter(csv_file, fieldnames=csv_headers)
+with open(csv_file_path_div, "w") as csv_file: # "w" means "open the file for writing"
+    writer = csv.DictWriter(csv_file, fieldnames=csv_headers_div)
     writer.writeheader() # uses fieldnames set above
     writer.writerow({
         "Symbol": dividend_parsed_response["symbol"], 
