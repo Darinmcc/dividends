@@ -26,31 +26,33 @@ api_key = os.environ.get("IEX_API_KEY")
 
 symbol_ref_url = f"https://cloud.iexapis.com/stable/ref-data/symbols?token={api_key}"
 ref_response = requests.get(symbol_ref_url) #< response variable - sends get requests, specify the URL for the request - see documentation
-print(type(ref_response)) #<class 'requests.models.Response'>
-print(ref_response.status_code) #200
-print(type(ref_response.text))
-#print(ref_response.text) #same as print(response.json())
+    #print(type(ref_response)) #<class 'requests.models.Response'>
+    #print(ref_response.status_code) #200
+    #print(type(ref_response.text))
+    #print(ref_response.text) #same as print(response.json())
 ref_parsed_response = json.loads(ref_response.text)
-print(type(ref_parsed_response))
 
 
 dividend_url = f"https://cloud.iexapis.com/stable/stock/{symbol}/dividends/ytd?token={api_key}"
-dividend_response = requests.get(dividend_url) #< response variable - sends get requests, specify the URL for the request - see documentation
-print(type(dividend_response)) #<class 'requests.models.Response'>
-print(dividend_response.status_code) #200
-print(type(dividend_response.text))
-#print(dividend_response.text) #same as print(response.json())
+dividend_response = requests.get(dividend_url) #< response variable - sends get requests, specify the URL for the request - see documentation#
+    #print(type(dividend_response)) #<class 'requests.models.Response'>
+    #print(dividend_response.status_code) #200
+    #print(type(dividend_response.text))
+    #print(dividend_response.text) #same as print(response.json())
 dividend_parsed_response = json.loads(dividend_response.text) # variable, parse str to dict
-print(dividend_parsed_response)
+#print(dividend_parsed_response)
 
+ref_dictionary = []
 
+for symbols in ref_parsed_response:
+    if symbols["symbol"] not in ref_dictionary:
+        ref_dictionary.append(symbols["symbol"])
 
-
-#if symbol is not in ref_parsed_response:
-    #print("Not a valid stock symbol. Please re-run")
-    #exit()
-#else:
-    #print(price_parsed_response)
+if symbol.upper() not in ref_dictionary:
+    print("Not a valid stock symbol. Please re-run")
+    exit()
+else:
+    print(dividend_parsed_response)
 
 
 #USE TO CYCLE THROUGH LIST FOR SYMBOLS
