@@ -14,9 +14,8 @@ load_dotenv() #> loads contents of the .env file into the script's environment
 
 csv_file_path_port = os.path.join(os.path.dirname(__file__), "..", "portfolio", "my_portfolio.csv")
 
-csv_headers_port = ["Symbol"]
 with open(csv_file_path_port, "r") as csv_file: # "w" means "open the file for writing"
-    reader = csv.DictReader(csv_file, fieldnames=csv_headers_port)
+    reader = csv.DictReader(csv_file) 
     for row in reader:
         print(row["Symbol"])
 
