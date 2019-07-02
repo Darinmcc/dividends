@@ -21,12 +21,13 @@ with open(csv_file_path_port, "r") as csv_file: # "w" means "open the file for w
         if row not in watchlist:
             watchlist.append(row["Symbol"])
 
-print(str(watchlist))
+sorted_watchlist = sorted(watchlist)
 
 
 # INFO INPUTS
 print("Welcome to Daily Dividends!")
 print("------------------------")
+print(f"Current Portfolio: \n {sorted_watchlist}")
 symbol = input("Enter stock symbol:")
 
 api_key = os.environ.get("IEX_API_KEY")
@@ -50,6 +51,7 @@ for ref_symbols in ref_parsed_response:
 
 #TO DO BUILD OUT A KICK OUT SHOWING THE BAD SYMBOL
 blank = []
+dividend_parsed_list = []
 
 for ticker in watchlist:
     if ticker not in ref_dictionary:
@@ -64,8 +66,8 @@ for ticker in watchlist:
             continue
         else:
              # variable, parse str to dict
-            print(type(dividend_parsed_response))
-            print(dividend_parsed_response)
+            dividend_parsed_list.append(dividend_parsed_response)
+print(dividend_parsed_list)
 breakpoint()
 # BUILDING A SKIP FOR VALID SYMBOLS W/O DIVS
 
