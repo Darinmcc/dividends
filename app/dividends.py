@@ -52,6 +52,7 @@ for ref_symbols in ref_parsed_response:
 #TO DO BUILD OUT A KICK OUT SHOWING THE BAD SYMBOL
 blank = []
 dividend_parsed_list = []
+upcomingdiv = []
 
 for ticker in watchlist:
     if ticker not in ref_dictionary:
@@ -67,31 +68,37 @@ for ticker in watchlist:
         else:
              # variable, parse str to dict
             dividend_parsed_list.append(dividend_parsed_response)
-print(dividend_parsed_list)
-breakpoint()
+            upcomingdiv.append(dividend_parsed_response["symbol"])
+            
+#print(dividend_parsed_list)
+
+divparse = 0
+
 # BUILDING A SKIP FOR VALID SYMBOLS W/O DIVS
 
         # WRITE DIVIDENDS TO CSV FILE
-#csv_file_path_div = os.path.join(os.path.dirname(__file__), "..", "data", "dividends.csv")
+csv_file_path_div = os.path.join(os.path.dirname(__file__), "..", "data", "dividends.csv")
         #don't change csv file path or __file__ variable
         #file starts in app directory
 
-#csv_headers_div = ["Symbol","Ex Date", "Payment Date", "Record Date", "Declared Date", "Dividend Amount", "Dividend Event Type","Currency","Description","Frequency"]
+csv_headers_div = ["Symbol","Ex Date", "Payment Date", "Record Date", "Declared Date", "Dividend Amount", "Dividend Event Type","Currency","Description","Frequency"]
 
-#with open(csv_file_path_div, "w") as csv_file: # "w" means "open the file for writing"
-    #writer = csv.DictWriter(csv_file, fieldnames=csv_headers_div)
-    #writer.writeheader() # uses fieldnames set above
-    #writer.writerow({
-        #"Symbol": dividend_parsed_response["symbol"], 
-        #"Ex Date": dividend_parsed_response["exDate"], 
-        #"Payment Date": dividend_parsed_response["paymentDate"], 
-        #"Record Date": dividend_parsed_response["recordDate"], 
-        #"Declared Date": dividend_parsed_response["declaredDate"], 
-        #"Dividend Amount": dividend_parsed_response["amount"],
-        #"Dividend Event Type": dividend_parsed_response["flag"],
-        #"Currency": dividend_parsed_response["currency"],
-        #"Description": dividend_parsed_response["description"],
-        #"Frequency": dividend_parsed_response["frequency"]})
+with open(csv_file_path_div, "w") as csv_file: # "w" means "open the file for writing"
+    writer = csv.DictWriter(csv_file, fieldnames=csv_headers_div)
+    writer.writeheader() # uses fieldnames set above
+    for row in upcomingdiv:
+        writer.writerow({
+            "Symbol": dividend_parsed_list[divparse]["symbol"], 
+            "Ex Date": dividend_parsed_list[divparse]["exDate"], 
+            "Payment Date": dividend_parsed_list[divparse]["paymentDate"], 
+            "Record Date": dividend_parsed_list[divparse]["recordDate"], 
+            "Declared Date": dividend_parsed_list[divparse]["declaredDate"], 
+            "Dividend Amount": dividend_parsed_list[divparse]["amount"],
+            "Dividend Event Type": dividend_parsed_list[divparse]["flag"],
+            "Currency": dividend_parsed_list[divparse]["currency"],
+            "Description": dividend_parsed_list[divparse]["description"],
+            "Frequency": dividend_parsed_list[divparse]["frequency"]})
+        divparse += 1
 
 print("-------------------------")
 print("Please check dividends.csv file for upcoming dividends!")
