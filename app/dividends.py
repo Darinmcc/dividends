@@ -24,11 +24,15 @@ with open(csv_file_path_port, "r") as csv_file: # "w" means "open the file for w
 sorted_watchlist = sorted(watchlist)
 
 
+
 # INFO INPUTS
 print("Welcome to Daily Dividends!")
 print("------------------------")
-print(f"Current Portfolio: \n {sorted_watchlist}")
-symbol = input("Enter stock symbol:")
+print(f"Please see your current Portfolio: \n {sorted_watchlist}")
+runport = input(F"Would you like to run upcoming dividends on your current portfolio? 'Y/N' \n")
+
+
+
 
 api_key = os.environ.get("IEX_API_KEY")
 
@@ -49,78 +53,95 @@ for ref_symbols in ref_parsed_response:
     if ref_symbols["symbol"] not in ref_dictionary:
         ref_dictionary.append(ref_symbols["symbol"])
 
-#TO DO BUILD OUT A KICK OUT SHOWING THE BAD SYMBOL
-blank = []
-dividend_parsed_list = []
-upcomingdiv = []
+if runport.upper() == "Y":
 
-for ticker in watchlist:
-    if ticker not in ref_dictionary:
-        print(f"Symbol: {ticker} not a valid stock symbol. Please re-run")
-        exit()
+#TO DO BUILD OUT A KICK OUT SHOWING THE BAD SYMBOL
+    blank = []
+    dividend_parsed_list = []
+    upcomingdiv = []
+
+    for ticker in watchlist:
+        if ticker not in ref_dictionary:
+            print(f"Symbol: {ticker} not a valid stock symbol. Please re-run")
+            exit()
     
-    else:
-        dividend_url = f"https://cloud.iexapis.com/stable/stock/{ticker}/dividends/next?token={api_key}"
-        dividend_response = requests.get(dividend_url) #< response variable - sends get requests, specify the URL for the request - see documentation#
-        dividend_parsed_response = json.loads(dividend_response.text)
-        if dividend_parsed_response == blank: #same as print(response.json())
-            continue
         else:
-             # variable, parse str to dict
-            dividend_parsed_list.append(dividend_parsed_response)
-            upcomingdiv.append(dividend_parsed_response["symbol"])
+            dividend_url = f"https://cloud.iexapis.com/stable/stock/{ticker}/dividends/next?token={api_key}"
+            dividend_response = requests.get(dividend_url) #< response variable - sends get requests, specify the URL for the request - see documentation#
+            dividend_parsed_response = json.loads(dividend_response.text)
+            if dividend_parsed_response == blank: #same as print(response.json())
+                continue
+            else:
+                # variable, parse str to dict
+                dividend_parsed_list.append(dividend_parsed_response)
+                upcomingdiv.append(dividend_parsed_response["symbol"])
             
 #print(dividend_parsed_list)
 
-divparse = 0
+    divparse = 0
 
 # BUILDING A SKIP FOR VALID SYMBOLS W/O DIVS
 
         # WRITE DIVIDENDS TO CSV FILE
-csv_file_path_div = os.path.join(os.path.dirname(__file__), "..", "data", "dividends.csv")
+    csv_file_path_div = os.path.join(os.path.dirname(__file__), "..", "data", "dividends.csv")
         #don't change csv file path or __file__ variable
         #file starts in app directory
 
-csv_headers_div = ["Symbol","Ex Date", "Payment Date", "Record Date", "Declared Date", "Dividend Amount", "Dividend Event Type","Currency","Description","Frequency"]
+    csv_headers_div = ["Symbol","Ex Date", "Payment Date", "Record Date", "Declared Date", "Dividend Amount", "Dividend Event Type","Currency","Description","Frequency"]
 
-with open(csv_file_path_div, "w") as csv_file: # "w" means "open the file for writing"
-    writer = csv.DictWriter(csv_file, fieldnames=csv_headers_div)
-    writer.writeheader() # uses fieldnames set above
-    for row in upcomingdiv:
-        writer.writerow({
-            "Symbol": dividend_parsed_list[divparse]["symbol"], 
-            "Ex Date": dividend_parsed_list[divparse]["exDate"], 
-            "Payment Date": dividend_parsed_list[divparse]["paymentDate"], 
-            "Record Date": dividend_parsed_list[divparse]["recordDate"], 
-            "Declared Date": dividend_parsed_list[divparse]["declaredDate"], 
-            "Dividend Amount": dividend_parsed_list[divparse]["amount"],
-            "Dividend Event Type": dividend_parsed_list[divparse]["flag"],
-            "Currency": dividend_parsed_list[divparse]["currency"],
-            "Description": dividend_parsed_list[divparse]["description"],
-            "Frequency": dividend_parsed_list[divparse]["frequency"]})
-        divparse += 1
+    with open(csv_file_path_div, "w") as csv_file: # "w" means "open the file for writing"
+        writer = csv.DictWriter(csv_file, fieldnames=csv_headers_div)
+        writer.writeheader() # uses fieldnames set above
+        for row in upcomingdiv:
+            writer.writerow({
+                "Symbol": dividend_parsed_list[divparse]["symbol"], 
+                "Ex Date": dividend_parsed_list[divparse]["exDate"], 
+                "Payment Date": dividend_parsed_list[divparse]["paymentDate"], 
+                "Record Date": dividend_parsed_list[divparse]["recordDate"], 
+                "Declared Date": dividend_parsed_list[divparse]["declaredDate"], 
+                "Dividend Amount": dividend_parsed_list[divparse]["amount"],
+                "Dividend Event Type": dividend_parsed_list[divparse]["flag"],
+                "Currency": dividend_parsed_list[divparse]["currency"],
+                "Description": dividend_parsed_list[divparse]["description"],
+                "Frequency": dividend_parsed_list[divparse]["frequency"]})
+            divparse += 1
 
-print("-------------------------")
-print("Please check dividends.csv file for upcoming dividends!")
-print("-------------------------")
+    print("-------------------------")
+    print("Please check dividends.csv file for upcoming dividends!")
+    print("-------------------------")
+else:
+    sblank = []
+    runsymbol = input(F"Would you like to run upcoming dividends for an adhoc symbol? 'Y/N' \n")
+    if runsymbol.upper() == "Y":
+        symbol = input("Enter stock symbol:")
+        if symbol not in ref_dictionary:
+            print(f"Symbol: {symbol} not a valid stock symbol. Please re-run")
+            exit()
+    
+        else:
+            dividend_url = f"https://cloud.iexapis.com/stable/stock/{symbol}/dividends/next?token={api_key}"
+            dividend_response = requests.get(dividend_url) #< response variable - sends get requests, specify the URL for the request - see documentation#
+            dividend_parsed_response = json.loads(dividend_response.text)
+            if dividend_parsed_response == sblank: #same as print(response.json())
+                print("-------------------------")
+                print(f"There are no upcoming dividends for symbol: {symbol}")
+                print("-------------------------")
+                exit()
+            else:
+                # variable, parse str to dict
+                print("-------------------------")
+                print("See dividend details below.")
+                print("-------------------------")
+                print(dividend_parsed_response)
+                print("-------------------------")
+    else:
+        print("-------------------------")
+        print("Sorry we couldn't assist with your Daily Dividend needs.")
+        print("Maybe next time...:)")
+        print("-------------------------")
 
 
 
-#price_url = f"https://cloud.iexapis.com/stable/stock/{symbol}/quote?token={api_key}"
-#price_response = requests.get(price_url) #< response variable - sends get requests, specify the URL for the request - see documentation
-#print(type(price_response)) #<class 'requests.models.Response'>
-#print(price_response.status_code) #200
-#print(type(price_response.text))
-#print(price_response.text) #same as print(response.json())
-#price_parsed_response = json.loads(price_response.text) # variable, parse str to dict
-#print(price_parsed_response)
 
-#exDate	string	refers to the dividend ex-date
-#paymentDate	string	refers to the payment date
-#recordDate	string	refers to the dividend record date
-#declaredDate	string	refers to the dividend declaration date
-#amount	number	refers to the payment amount
-#flag	string	Type of dividend event
-#currency	string	Currency of the dividend
-#description	string	Description of the dividend event
-#frequency	string	Frequency of the dividend
+
+
