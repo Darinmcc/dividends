@@ -113,7 +113,7 @@ else:
     sblank = []
     runsymbol = input(F"Would you like to run upcoming dividends for an adhoc symbol? 'Y/N' \n")
     if runsymbol.upper() == "Y":
-        symbol = input("Enter stock symbol:")
+        symbol = input("Enter stock symbol:").upper()
         if symbol not in ref_dictionary:
             print(f"Symbol: {symbol} not a valid stock symbol. Please re-run")
             exit()
